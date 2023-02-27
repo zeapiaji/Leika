@@ -1,0 +1,16 @@
+.login-bg{
+    background-color: rgb(0, 7, 26);
+    background-image: url('/images/auth/login-bg.png');
+    background-repeat:no-repeat;
+    background-size:100%;
+    /* background-position:center; */
+}
+
+.register-bg{
+    background-color: rgb(0, 7, 26);
+    background-image: url('/images/auth/reset.png');
+    background-repeat:no-repeat;
+    background-size:100%;
+}
+
+
