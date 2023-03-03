@@ -4,10 +4,21 @@
 
 
 <!-- start page title -->
+
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">Kelola Barang untuk Dilelang</h4>
+            <h4 class="mb-0">Kelola Lelang</h4>
+            <div class="page-title-right">
+                <div class="d-flex">
+                    <h5 class="text-dark">
+                        <a href="{{route('lelang')}}">
+                            Kelola Lelang
+                        </a>
+                    </h5>
+                    <h5 class="ms-1 me-1">/</h5> 
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -77,8 +88,7 @@
                                             @if (isset($item->lelang) && $item->lelang->status == 1)
                                             <h5 class="mt-3 mb-0">
                                                 <span class="text-muted me-2 fs-6">
-                                                    <i
-                                                        class="uil-users-alt"></i>{{$item->lelang->penawaran ? $item->lelang->penawaran->count() : '0'}}
+                                                    <i class="uil-users-alt"></i>{{$item->lelang->penawaran ? $item->lelang->penawaran->count() : '0'}}
                                                 </span>
                                                 <span class="fw-bolder">
                                                     <i class="uil-money-withdraw"></i>
@@ -89,6 +99,16 @@
                                             <h6 class="text-muted">
                                                 Lelang telah berakhir
                                             </h6>
+                                            @elseif(isset($item->lelang) && $item->lelang->status == 0)
+                                            <h5 class="mt-3 mb-0">
+                                                <span class="text-muted me-2 fs-6">
+                                                    <i class="uil-users-alt"></i>{{$item->lelang->penawaran ? $item->lelang->penawaran->count() : '0'}}
+                                                </span>
+                                                <span class="fw-bolder">
+                                                    <i class="uil-money-withdraw"></i>
+                                                    {{$item->lelang->harga_tertinggi}}
+                                                </span>
+                                            </h5>
                                             @else
                                             <h6 class="text-muted">
                                                 Barang sedang tidak dilelang
@@ -102,7 +122,7 @@
                                                     onclick="tutup_lelang({{$item->id}})"><i class="uil-padlock"></i> Tutup
                                                     Lelang</button>
                                                 <a href="{{route('lihat_lelang', $item->id)}}" class="btn btn-sm btn-primary" data-bs-container="#tooltip-container-{{$item->id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Lelang"><i class="uil-eye"></i></a>
-                                                @elseif(isset($item->lelang) && $item->lelang->status == 2)
+                                                @elseif (isset($item->lelang) && $item->lelang->status == 2)
                                                 <a href="{{route('lihat_lelang', $item->id)}}" class="btn btn-sm btn-primary" data-bs-container="#tooltip-container-{{$item->id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Lelang"><i class="uil-eye"></i></a>
                                                 @else
                                                 <a href="{{$item->id_kamera > 0 ? route('edit.kamera', $item->id) : route('edit.lensa', $item->id)}}" class="btn btn-sm btn-success" item-bs-container="#tooltip-container-{{$item->id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Barang"><i class="uil-edit"></i></a>
@@ -110,9 +130,10 @@
                                                     class="btn btn-sm btn-primary"><i class="uil-unlock-alt"></i>
                                                     Buka Lelang</a>
                                                     @if (isset($item->lelang))
-                                                    <a href="{{route('akhiri_lelang', $item->id)}}"
+                                                    <button onclick="akhiri_lelang({{$item->id}})"
                                                         class="btn btn-sm btn-warning"><i class="uil-padlock"></i>
-                                                        Akhiri Lelang</a>
+                                                        Akhiri Lelang</button>
+                                                        <a href="{{route('lihat_lelang', $item->id)}}" class="btn btn-sm btn-primary" data-bs-container="#tooltip-container-{{$item->id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Lelang"><i class="uil-eye"></i></a>
                                                     @endif
                                                 @endif
                                             </ul>
@@ -155,6 +176,22 @@
         }
     </script>
 
-
+<script>
+    function akhiri_lelang(id) {
+      Swal.fire({
+        title: 'Anda yakin ingin mengakhiri lelang?',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonColor: '#5B73E8',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#F46A6A',
+        confirmButtonText: 'Ya, akhiri lelang!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{{ route('akhiri_lelang', ['id' => ':id']) }}".replace(':id', id);
+        }
+      })
+    }
+</script>
 
 @endsection

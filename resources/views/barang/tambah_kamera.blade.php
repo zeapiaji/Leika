@@ -7,12 +7,6 @@
             <h4 class="mb-0">Tambah Kamera</h4>
             <div class="page-title-right">
                 <div class="d-flex">
-                    <h5 class="text-dark">
-                        <a href="{{route('dasbor')}}">
-                            Dasbor
-                        </a>
-                    </h5>
-                    <h5 class="ms-1 me-1">/</h5> 
                     <h5><a href="{{route('index')}}">Kelola Barang</a></h5>
                     <h5 class="ms-1 me-1">/</h5>
                     <h5>Tambah Kamera</h5>

@@ -12,9 +12,15 @@ class KondisiController extends Controller
      public function unggah(Request $request)
     {
         DB::transaction(function () use($request){
-            Kondisi::create([
-                'nama' => $request->nama
-            ]);
+            try {
+                Kondisi::create([
+                    'nama' => $request->nama
+                ]);
+                Toastr::success('Berhasil', 'Data Berhasil Ditambahkan!');
+            } catch (\Throwable $th) {
+                Toastr::error('Gagal', 'Data Gagal Ditambahkan!');
+                return back();
+            }
         });
 
         return redirect()->route('data_pendukung');
@@ -29,9 +35,15 @@ class KondisiController extends Controller
     public function perbarui(Request $request, $id)
     {
         DB::transaction(function () use($request, $id){
-            $Kondisi = Kondisi::findOrFail($id);
-            $Kondisi->nama = $request->nama;
-            $Kondisi->save();
+            try {
+                $Kondisi = Kondisi::findOrFail($id);
+                $Kondisi->nama = $request->nama;
+                $Kondisi->save();
+                Toastr::success('Berhasil', 'Data Berhasil Diperbarui!');
+            } catch (\Throwable $th) {
+                Toastr::error('Gagal', 'Data Gagal Diperbarui!');
+                return back();
+            }
         });
 
         return redirect()->route('data_pendukung');
@@ -43,9 +55,10 @@ class KondisiController extends Controller
             try {
                 $Kondisi = Kondisi::findOrFail($id);
                 $Kondisi->delete();
-                //code...
+                Toastr::success('Berhasil', 'Data Berhasil Dihapus!');
             } catch (\Throwable $th) {
                 Toastr::error('Gagal', 'Data Gagal Dihapus, Hapus Data yang tersambung terlebih dahulu!');
+                return back();
             }
         }); 
 

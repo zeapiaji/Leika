@@ -85,12 +85,12 @@
 
                             <div class="mb-3">
                                 <label class="form-label" for="telp">Nomor Telepon</label>
-                                <input type="text" name="telp"
+                                <input type="number" name="telp"
                                     class="form-control @error('telp') is-invalid @enderror" value="{{old('telp')}}"
                                     id="telp" placeholder="Masukan Nomor Telepon Anda" required autocomplete="telp"
                                     autofocus>
 
-                                @error('name')
+                                @error('telp')
                                 <span class="invalid-feedback">
                                     <strong>{{$message}}</strong>
                                 </span>
@@ -98,12 +98,12 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="usia">Usia</label>
-                                <input type="text" name="usia"
+                                <input type="number" name="usia"
                                     class="form-control @error('usia') is-invalid @enderror" value="{{old('usia')}}"
                                     id="usia" placeholder="Masukan Usia Anda" required autocomplete="name"
                                     autofocus>
 
-                                @error('name')
+                                @error('usia')
                                 <span class="invalid-feedback">
                                     <strong>{{$message}}</strong>
                                 </span>
@@ -113,7 +113,7 @@
                             <div class="mb-3">
                                 <label class="form-label" for="foto_profil">Foto Profil</label>
                                 <input type="file" name="foto_profil"
-                                    class="form-control @error('name') is-invalid @enderror" id="foto_profil" autofocus>
+                                    class="form-control @error('foto_profil') is-invalid @enderror" id="foto_profil" autofocus>
 
                                 @error('foto_profil')
                                 <span class="invalid-feedback">
@@ -124,7 +124,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label" for="username">Alamat</label>
-                                <textarea name="alamat" id="" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="alamat" id="" cols="30" rows="3" class="form-control @error('alamat') is-invalid @enderror">{{old('alamat')}}</textarea>
                                 @error('alamat')
                                 <span class="invalid-feedback">
                                     <strong>{{$message}}</strong>

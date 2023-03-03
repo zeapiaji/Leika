@@ -120,4 +120,12 @@
     </div>
 </div>
 <!-- end row -->
+<script>
+    function printAndNotify() {
+  window.print();
+  window.addEventListener('afterprint', function() {
+    alert('File berhasil diunduh.');
+  });
+}
+</script>
 @endsection

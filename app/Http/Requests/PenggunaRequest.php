@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PenggunaRequest extends FormRequest
 {
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -25,11 +26,11 @@ class PenggunaRequest extends FormRequest
     {
         $rules = [
             'email' => 'required|email|unique:users,email,'.$this->id,
-            'username' => 'required',
+            'username' => 'required|min:3|max:12|unique:users,username,'.$this->id,
             'nama_lengkap' => 'required',
-            'telp' => 'required',
-            'usia' => 'required',
-            'alamat' => 'required',
+            'telp' => 'required|max:14|min:11',
+            'usia' => 'required|max:2',
+            'alamat' => 'required|min:8',
         ];
 
 
@@ -40,11 +41,17 @@ class PenggunaRequest extends FormRequest
     {
         return [
             'foto_profil.required' => 'Foto Profil harus diisi!',
-            'username' => 'Username harus diisi!',
-            'email' => 'Email harus diisi!',
+            'username.required' => 'Username harus diisi!',
+            'username.unique' => 'Username sudah dipakai!',
+            'email.required' => 'Email harus diisi!',
+            'email.email' => 'Format email salah!',
+            'email.unique' => 'Email sudah dipakai!',
             'nama_lengkap' => 'Nama Lengkap harus diisi!',
-            'telp' => 'Nomor Telepon harus diisi!',
-            'usia' => 'Usia harus diisi!',
+            'telp.required' => 'Nomor Telepon harus diisi!',
+            'telp.min' => 'Nomor Telepon maksimal 14 digit!',
+            'telp.min' => 'Nomor Telepon minimal 11 digit!',
+            'usia.required' => 'Usia harus diisi!',
+            'usia.max' => 'Usia harus 2 digit!',
             'alamat' => 'Alamat harus diisi!',
         ];
     }

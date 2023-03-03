@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', [LandingController::class, 'index'])->name('landing_page');
 Route::middleware(['role:admin||petugas'])->group(function () {
 
@@ -43,7 +44,6 @@ Route::middleware(['role:admin||petugas'])->group(function () {
             
             Route::post('/unggah-kamera', [BarangController::class, 'unggah_kamera'])->name('unggah.kamera');
             Route::post('/unggah-lensa', [BarangController::class, 'unggah_lensa'])->name('unggah.lensa');
-    
     
             Route::post('/perbarui-kamera/{id}', [BarangController::class, 'perbarui_kamera'])->name('perbarui.kamera');
             Route::put('/perbarui-lensa/{id}', [BarangController::class, 'perbarui_lensa'])->name('perbarui.lensa');

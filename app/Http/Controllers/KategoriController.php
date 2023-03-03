@@ -12,10 +12,16 @@ class KategoriController extends Controller
     public function unggah(Request $request)
     {
         DB::transaction(function () use($request){
-            Kategori::create([
-                'nama' => $request->nama,
-                'status' => 0,
-            ]);
+            try {
+                Kategori::create([
+                    'nama' => $request->nama,
+                    'status' => 0,
+                ]);
+                Toastr::success('Berhasil', 'Data Berhasil Ditambahkan!');
+            } catch (\Throwable $th) {
+                Toastr::error('Berhasil', 'Data Gagal Ditambahkan!');
+                return back();
+            }
         });
 
         return redirect()->route('data_pendukung');
@@ -30,9 +36,15 @@ class KategoriController extends Controller
     public function perbarui(Request $request, $id)
     {
         DB::transaction(function () use($request, $id){
-            $data = Kategori::findOrFail($id);
-            $data->nama = $request->nama;
-            $data->save();
+            try {
+                $data = Kategori::findOrFail($id);
+                $data->nama = $request->nama;
+                $data->save();
+                Toastr::success('Berhasil', 'Data Berhasil Diperbarui!');
+            } catch (\Throwable $th) {
+                Toastr::success('Berhasil', 'Data Gagal Diperbarui!');
+                return back();
+            }
         });
 
         return redirect()->route('data_pendukung');
@@ -42,9 +54,9 @@ class KategoriController extends Controller
     {
         DB::transaction(function () use($id){
             try {
-                //code...
-                $merek = Kategori::findOrFail($id);
+                $merek = Kategori::find($id);
                 $merek->delete();
+                Toastr::success('Berhasil', 'Data Berhasil Dihapus');
             } catch (\Throwable $th) {
                 Toastr::error('Gagal', 'Data Gagal Dihapus, Hapus Data yang tersambung terlebih dahulu!');
             }

@@ -44,9 +44,14 @@ class MerekController extends Controller
     public function perbarui(Request $request, $id)
     {
         DB::transaction(function () use($request, $id){
-            $merek = Merek::findOrFail($id);
-            $merek->nama = $request->nama;
-            $merek->save();
+            try {
+                $merek = Merek::findOrFail($id);
+                $merek->nama = $request->nama;
+                $merek->save();
+                Toastr::success('Berhasil', 'Data Berhasil Diperbarui!');
+            } catch (\Throwable $th) {
+                Toastr::error('Gagal', 'Data Gagal Diperbarui!');
+            }
         });
 
         return redirect()->route('data_pendukung');
@@ -58,6 +63,7 @@ class MerekController extends Controller
             try {
                 $merek = Merek::findOrFail($id);
                 $merek->delete();
+                Toastr::success('Berhasil', 'Data Berhasil Dihapus!');
             } catch (\Throwable $th) {
                 Toastr::error('Gagal', 'Data Gagal Dihapus, Hapus Data yang tersambung terlebih dahulu!');
             }

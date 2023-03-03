@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\PenggunaRequest;
+use App\Models\Barang;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -40,11 +41,11 @@ class HomeController extends Controller
         $penawaran = Penawaran::whereDate('created_at', Carbon::today())->orderBy('id', 'desc')->get();
         $lelang = Lelang::where('status', 1)->count();
         $pengguna = User::role('masyarakat')->count();
+        $barang = Barang::all()->count();   
         $petugas= User::role('petugas')->count();
-        
         $riwayat_lelang = Riwayat_Lelang::orderBy('id', 'desc')->get();
 
-        return view('home', compact('penawaran', 'lelang', 'pengguna', 'riwayat_lelang','petugas'));
+        return view('home', compact('penawaran', 'lelang', 'pengguna', 'riwayat_lelang','petugas', 'barang'));
     }
 
     public function lihat_profil()

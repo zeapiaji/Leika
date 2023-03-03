@@ -93,7 +93,7 @@
             <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                 @role('masyarakat')
                 <li class="nav-item">
-                    <a class="nav-link @role('masyarakat') active @endrole" data-bs-toggle="tab" href="#about" role="tab">
+                    <a class="nav-link @role('masyarakat') @if(!$errors->any()) active @endif @endrole" data-bs-toggle="tab" href="#about" role="tab">
                         <i class="uil uil-file-alt font-size-20"></i>
                         <span class="d-none d-sm-block">Riwayat</span>
                     </a>
@@ -106,7 +106,7 @@
                 </li>
                 @endrole
                 <li class="nav-item">
-                    <a class="nav-link @role('petugas||admin') active @endrole" data-bs-toggle="tab" href="#tasks" role="tab">
+                    <a class="nav-link @role('petugas||admin') active @endrole @if($errors->any()) active @endif" data-bs-toggle="tab" href="#tasks" role="tab">
                         <i class="uil uil-edit font-size-20"></i>
                         <span class="d-none d-sm-block">Edit Profil</span>
                     </a>
@@ -121,7 +121,7 @@
             <!-- Tab content -->
             <div class="tab-content p-4">
                 @role('masyarakat')
-                <div class="tab-pane active" id="about" role="tabpanel">
+                <div class="tab-pane @if(!$errors->any()) active @endif" id="about" role="tabpanel">
                         <div>
                             <div class="d-flex">
                                 <h5 class="font-size-16 mb-4">Riwayat Lelang</h5>
@@ -149,6 +149,7 @@
                             <h5 class="font-size-16 mb-4">Inbox</h5>
                         </div>
                         <ul class="activity-feed mb-0 ps-2">
+                            @if ($inbox->count()>0)
                             @foreach ($inbox as $item)    
                             <li class="feed-item">
                                 <div class="feed-item-list">
@@ -162,6 +163,11 @@
                                 </div>
                             </li>
                             @endforeach
+                            @else
+                            <div class="text-center">
+                                <h6 class="text-muted">Belum ada Inbox!</h6>
+                            </div>
+                            @endif
                         </ul>
                         <div class="row">
                             {{$inbox->links()}}
@@ -169,7 +175,7 @@
                     </div>
                 </div>
                 @endrole
-                <div class="tab-pane @role('petugas||admin') active @endrole" id="tasks" role="tabpanel">
+                <div class="tab-pane @role('petugas||admin') active @endrole @if($errors->any()) active @endif" id="tasks" role="tabpanel">
                     <h5 class="font-size-16 mb-4">Edit Profil</h5>
                     <form action="{{route('perbarui_profil', Auth::user()->id)}}" method="POST" class="mt-4"
                         enctype="multipart/form-data" class="custom-validation">
@@ -210,10 +216,10 @@
 
                                 <div class="mb-3">
                                     <label class="form-label" for="useremail">Email</label>
-                                    <input type="email" name="email"
-                                        class="form-control @error('email') is-invalid @enderror"
+                                    <input  name="email"
+                                        class="form-control input-mask @error('email') is-invalid @enderror"
                                         value="{{old('email', Auth::user()->email)}}" id="useremail"
-                                        placeholder="Masukan Email Anda" required autocomplete="email">
+                                        placeholder="Masukan Email Anda" required autocomplete="email" data-inputmask="'alias':'email'">
 
                                     @error('email')
                                     <span class="invalid-feedback">
@@ -241,7 +247,7 @@
 
                                 <div class="mb-3">
                                     <label class="form-label" for="telp">Nomor Telepon</label>
-                                    <input type="text" name="telp"
+                                    <input type="number" name="telp"
                                         class="form-control @error('telp') is-invalid @enderror"
                                         value="{{old('telp', Auth::user()->telp)}}" id="telp"
                                         placeholder="Masukan Nomor Telepon Anda" required autocomplete="telp" autofocus>
@@ -255,10 +261,10 @@
 
                                 <div class="mb-3">
                                     <label class="form-label" for="usia">Usia</label>
-                                    <input type="text" name="usia"
+                                    <input type="number" name="usia"
                                         class="form-control @error('usia') is-invalid @enderror"
                                         value="{{old('usia', Auth::user()->usia)}}" id="usia"
-                                        placeholder="Masukan Usia Anda" required autocomplete="name" autofocus>
+                                        placeholder="Masukan Usia Anda" required autocomplete="usia" autofocus>
 
                                     @error('usia')
                                     <span class="invalid-feedback">

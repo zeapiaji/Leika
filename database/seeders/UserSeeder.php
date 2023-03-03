@@ -54,5 +54,18 @@ class UserSeeder extends Seeder
          ]);
          
          $masyarakat->assignRole('masyarakat');
+
+         $zeapiaji = User::create([
+            'nama_lengkap' => 'zeapiaji',
+            'username' => 'zeapiaji',
+            'email' => 'zeapiaji@gmail.com',
+            'password' => Hash::make('zeapiaji'),
+            'telp' => '213701032132',
+            'alamat' => '154 Dewayne Plains East Theresa, AR 51813-6151',
+            'usia' => '50',
+            'foto_profil' => 'images/pengguna/default.png',
+         ]);
+         
+         $zeapiaji->assignRole('masyarakat');
     }
 }

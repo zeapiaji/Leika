@@ -13,33 +13,37 @@
 
 <div class="row">
     <div class="col-md-6 col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="float-end mt-2">
-                    <div id="total-revenue-chart" data-colors='["--bs-primary"]'></div>
+        <a href="{{route('index')}}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="float-end mt-2">
+                        <div id="total-revenue-chart" data-colors='["--bs-primary"]'></div>
+                    </div>
+                    <div>
+                    <h4 class="mb-1 mt-1"><span data-plugin="counterup">{{$barang}}</span></h4>
+                        <p class="text-muted mb-0">Total Barang</p>
+                    </div>
+    
                 </div>
-                <div>
-                    <h4 class="mb-1 mt-1"><span data-plugin="counterup">{{$riwayat_lelang->count()}}</span></h4>
-                    <p class="text-muted mb-0">Lelang Selesai</p>
-                </div>
-
             </div>
-        </div>
+        </a>
     </div> <!-- end col-->
 
     <div class="col-md-6 col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="float-end mt-2">
-                    <div id="orders-chart" data-colors='["--bs-success"]'> </div>
+        <a href="{{route('lelang')}}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="float-end mt-2">
+                        <div id="orders-chart" data-colors='["--bs-success"]'> </div>
+                    </div>
+                    <div>
+                        <h4 class="mb-1 mt-1"><span data-plugin="counterup">{{$lelang}}</span></h4>
+                        <p class="text-muted mb-0">Lelang Sedang Berlangsung</p>
+                    </div>
+                  
                 </div>
-                <div>
-                    <h4 class="mb-1 mt-1"><span data-plugin="counterup">{{$lelang}}</span></h4>
-                    <p class="text-muted mb-0">Lelang Sedang Dimulai</p>
-                </div>
-              
             </div>
-        </div>
+        </a>
     </div> <!-- end col-->
 
     <div class="col-md-6 col-xl-3">
@@ -257,6 +261,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if(count($riwayat_lelang)>0)
                             @foreach ($riwayat_lelang as $item)    
                             <tr>
                                 <td><a href="{{route('lihat_lelang', $item->id_barang)}}" class="text-body fw-bold">#{{$item->id}}</a> </td>
@@ -276,6 +281,13 @@
                                 </td>
                             </tr>
                             @endforeach
+                            @else
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <h6 class="text-muted"><i>Belum ada Transaksi</i></h6>
+                                </td>
+                            </tr>
+                            @endif
 
                         </tbody>
                     </table>
@@ -287,7 +299,7 @@
 </div>
 
 <div class="row">
-    <div class="col-xl-4">
+    <div class="col-xl-6">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title mb-4">Pemenang Lelang</h4>
@@ -296,10 +308,16 @@
                     <div class="table-responsive">
                         <table class="table table-borderless table-centered table-nowrap">
                             <tbody>
+                                @if($riwayat_lelang->count()>0)
                                 @foreach ($riwayat_lelang as $item)    
                                 <tr>
+                                    @if (Storage::exists($item->user->foto_profil))   
                                     <td style="width: 20px;"><img src="{{asset('storage/'. $item->user->foto_profil)}}"
                                             class="avatar-xs rounded-circle " alt="..."></td>
+                                    @else
+                                    <td style="width: 20px;"><img src="{{asset('images/users/default.png')}}"
+                                        class="avatar-xs rounded-circle " alt="..."></td>
+                                    @endif
                                     <td>
                                         <h6 class="font-size-15 mb-1 fw-normal">{{$item->user->nama_lengkap}}</h6>
                                         <p class="text-muted font-size-13 mb-0">
@@ -310,6 +328,13 @@
                                             data-feather="trending-up"></i>Rp {{$item->penawaran_harga}}</td>
                                 </tr>
                                 @endforeach
+                                @else
+                                <h6 class="text-muted">
+                                    <i>
+                                    Belum ada Pemenang Lelang
+                                </i>
+                                </h6>
+                                @endif
                             </tbody>
                         </table>
                     </div> <!-- enbd table-responsive-->
@@ -318,12 +343,13 @@
         </div> <!-- end card-->
     </div><!-- end col -->
 
-    <div class="col-xl-4">
+    <div class="col-xl-6">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title mb-4">Aktifitas Baru-Baru Ini</h4>
 
                 <ol class="activity-feed mb-0 ps-2" data-simplebar style="max-height: 339px;">
+                    @if ($penawaran->count()>0)    
                     @foreach ($penawaran as $item)    
                     <li class="feed-item">
                         <div class="feed-item-list">
@@ -335,91 +361,19 @@
                         </div>
                     </li>
                     @endforeach
+                    @else
+                    <h6>
+                        <i>
+                            Belum ada Riwayat Penawaran
+                        </i>
+                    </h6>
+                    @endif
 
                 </ol>
 
             </div>
         </div>
     </div>
-
-    {{-- <div class="col-xl-4">
-        <div class="card">
-            <div class="card-body">
-
-                <div class="float-end">
-                    <div class="dropdown">
-                        <a class="dropdown-toggle" href="#" id="dropdownMenuButton4" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <span class="text-muted">Monthly<i class="mdi mdi-chevron-down ms-1"></i></span>
-                        </a>
-
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton4">
-                            <a class="dropdown-item" href="#">Yearly</a>
-                            <a class="dropdown-item" href="#">Monthly</a>
-                            <a class="dropdown-item" href="#">Weekly</a>
-                        </div>
-                    </div>
-                </div>
-
-                <h4 class="card-title">Social Source</h4>
-
-                <div class="text-center">
-                    <div class="avatar-sm mx-auto mb-4">
-                        <span class="avatar-title rounded-circle bg-soft-primary font-size-24">
-                            <i class="mdi mdi-facebook text-primary"></i>
-                        </span>
-                    </div>
-                    <p class="font-16 text-muted mb-2"></p>
-                    <h5><a href="#" class="text-dark">Facebook - <span class="text-muted font-16">125 sales</span> </a>
-                    </h5>
-                    <p class="text-muted">Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero
-                        venenatis faucibus tincidunt.</p>
-                    <a href="#" class="text-reset font-16">Learn more <i class="mdi mdi-chevron-right"></i></a>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-4">
-                        <div class="social-source text-center mt-3">
-                            <div class="avatar-xs mx-auto mb-3">
-                                <span class="avatar-title rounded-circle bg-primary font-size-16">
-                                    <i class="mdi mdi-facebook text-white"></i>
-                                </span>
-                            </div>
-                            <h5 class="font-size-15">Facebook</h5>
-                            <p class="text-muted mb-0">125 sales</p>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="social-source text-center mt-3">
-                            <div class="avatar-xs mx-auto mb-3">
-                                <span class="avatar-title rounded-circle bg-info font-size-16">
-                                    <i class="mdi mdi-twitter text-white"></i>
-                                </span>
-                            </div>
-                            <h5 class="font-size-15">Twitter</h5>
-                            <p class="text-muted mb-0">112 sales</p>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="social-source text-center mt-3">
-                            <div class="avatar-xs mx-auto mb-3">
-                                <span class="avatar-title rounded-circle bg-pink font-size-16">
-                                    <i class="mdi mdi-instagram text-white"></i>
-                                </span>
-                            </div>
-                            <h5 class="font-size-15">Instagram</h5>
-                            <p class="text-muted mb-0">104 sales</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-3 text-center">
-                    <a href="#" class="text-primary font-size-14 fw-medium">View All Sources <i
-                            class="mdi mdi-chevron-right"></i></a>
-                </div>
-
-            </div>
-        </div>
-    </div> --}}
 </div>
 <!-- end row -->
 

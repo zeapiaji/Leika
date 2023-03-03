@@ -12,9 +12,15 @@ class MountingController extends Controller
     public function unggah(Request $request)
     {
         DB::transaction(function () use($request){
-            Mounting::create([
-                'nama' => $request->nama
-            ]);
+            try {
+                Mounting::create([
+                    'nama' => $request->nama
+                ]);
+                Toastr::success('Berhasil', 'Data Berhasil Diperbarui!');
+            } catch (\Throwable $th) {
+                Toastr::error('Gagal', 'Data Gagal Ditambahkan!');
+                return back();
+            }
         });
 
         return redirect()->route('data_pendukung');
@@ -29,9 +35,15 @@ class MountingController extends Controller
     public function perbarui(Request $request, $id)
     {
         DB::transaction(function () use($request, $id){
-            $data = Mounting::findOrFail($id);
-            $data->nama = $request->nama;
-            $data->save();
+            try {
+                $data = Mounting::findOrFail($id);
+                $data->nama = $request->nama;
+                $data->save();
+                Toastr::success('Berhasil', 'Data Berhasil Diperbarui!');
+            } catch (\Throwable $th) {
+                Toastr::error('Gagal', 'Data Gagal Diperbarui!');
+                return back();
+            }
         });
 
         return redirect()->route('data_pendukung');
@@ -44,8 +56,10 @@ class MountingController extends Controller
                 //code...
                 $merek = Mounting::findOrFail($id);
                 $merek->delete();
+                Toastr::success('Berhasil', 'Data Berhasil Dihapus!');
             } catch (\Throwable $th) {
                 Toastr::error('Gagal', 'Data Gagal Dihapus, Hapus Data yang tersambung terlebih dahulu!');
+                return back();
             }
         }); 
 

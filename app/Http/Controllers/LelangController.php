@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LelangRequest;
 use App\Models\Barang;
 use App\Models\Lelang;
 use App\Models\Penawaran;
@@ -11,6 +12,8 @@ use App\Models\Riwayat_Lelang;
 use Illuminate\Support\Facades\DB;
 use Yoeunes\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Toaster;
+use Yoeunes\Toastr\Toastr as ToastrToastr;
 
 class LelangController extends Controller
 {
@@ -32,8 +35,9 @@ class LelangController extends Controller
     public function index()
     {
         $data = Lelang::orderBy('id', 'desc')->where('status', 1)->paginate(9);
+        $selesai_lelang = Lelang::orderBy('id', 'desc')->where('status', 2)->paginate(9);
 
-        return view('lelang.guest', compact('data'));
+        return view('lelang.home', compact('data', 'selesai_lelang'));
     }
 
     public function lelang()
@@ -51,8 +55,14 @@ class LelangController extends Controller
      */
     public function lelang_barang($id)
     {
-        $data = Barang::find($id);
-        $foto_utama = FotoBarang::where('id_barang', $data->id)->first();
+        try {
+            $data = Barang::find($id);
+            $foto_utama = FotoBarang::where('id_barang', $data->id)->first();
+        } catch (\Throwable $th) {
+            Toastr::error('Gagal', 'Barang Tidak Ditemukan!');
+            return back();
+        }
+
         return view('lelang.buka', compact('data', 'foto_utama'));
     }
 
@@ -62,31 +72,32 @@ class LelangController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function buka_lelang(Request $request, $id)
+    public function buka_lelang(LelangRequest $request, $id)
     {
+
         DB::transaction(function () use($request, $id){
-            $lelang = Lelang::where('id_barang', $id)->first();
-            if(isset($lelang)){
-                $lelang->update([
-                    'id_barang' => $id,
-                    'harga_awal' => $request->harga_awal,
-                    'kelipatan_harga' => $request->kelipatan_harga,
-                    'harga_tertinggi' => 0,
-                    'id_petugas' => Auth::user()->id,
-                    'status' => 1,
-                ]);
-                return redirect()->route('lelang');        
-            }else{
-                Lelang::create([
-                    'id_barang' => $id,
-                    'harga_awal' => $request->harga_awal,
-                    'kelipatan_harga' => $request->kelipatan_harga,
-                    'harga_tertinggi' => 0,
-                    'id_petugas' => Auth::user()->id,
-                    'status' => 1,
-                ]);
+            try {
+                $lelang = Lelang::where('id_barang', $id)->first();
+                if(isset($lelang)){
+                    $lelang->update([
+                        'status' => 1,
+                    ]);
+                    Toastr::success('Berhasil', 'Lelang Berhasil Dibuka Kembali!', ['timeOut' => 5000]);
+                    return redirect()->route('lelang');        
+                }else{
+                    Lelang::create([
+                        'id_barang' => $id,
+                        'harga_awal' => $request->harga_awal,
+                        'kelipatan_harga' => $request->kelipatan_harga,
+                        'harga_tertinggi' => 0,
+                        'id_petugas' => Auth::user()->id,
+                        'status' => 1,
+                    ]);
+                }
+                Toastr::success('Berhasil', 'Lelang Berhasil Dibuka!', ['timeOut' => 5000]);
+            } catch (\Throwable $th) {
+                Toastr::error('Gagal', 'Lelang Gagal Dibuka!', ['timeOut' => 5000]);
             }
-            Toastr::success('Berhasil', 'Lelang Berhasil Dibuka!', ['timeOut' => 5000]);
         });
         return redirect()->route('lelang');
     }
@@ -101,10 +112,14 @@ class LelangController extends Controller
     {
         $lelang = Lelang::where('id_barang',$id)->first();
         DB::transaction(function () use($lelang){
-            $lelang->update([
-                'status' => 0 //Status 2 = Sudah dihapus dari lelang
-            ]);
-            Toastr::success('Berhasil', 'Lelang Berhasil Ditutup!', ['timeOut' => 5000]);
+            try {
+                $lelang->update([
+                    'status' => 0 //Status 2 = Sudah dihapus dari lelang
+                ]);
+                Toastr::success('Berhasil', 'Lelang Berhasil Ditutup!', ['timeOut' => 5000]);
+            } catch (\Throwable $th) {
+                Toastr::success('Gagal', 'Lelang Berhasil Gagal Ditutup!', ['timeOut' => 5000]);
+            }
         });
 
         return redirect()->route('lelang');
@@ -139,33 +154,38 @@ class LelangController extends Controller
 
     public function bid($id)
     {
-        $lelang = Lelang::find($id);
-        DB::transaction(function () use($id, $lelang){ 
-            if ($lelang->harga_tertinggi == 0) {
-                $bid = Penawaran::create([
-                 'id_user' => Auth::user()->id,
-                 'id_lelang' => $id,
-                 'harga_penawaran' => $lelang->harga_awal
-                ]);
-                $lelang->update([
-                    'harga_tertinggi' => $bid->harga_penawaran,
-                ]);
-            }else{
-                $penawaran_tertinggi = $lelang->harga_tertinggi;
-                $kelipatan_harga = $lelang->kelipatan_harga;
-                $harga_penawaran = $penawaran_tertinggi + $kelipatan_harga;
-
-                $bid = Penawaran::create([
-                    'id_user' => Auth::user()->id,
-                    'id_lelang' => $id,
-                    'harga_penawaran' => $harga_penawaran
-                ]);
-                $lelang->update([
-                    'harga_tertinggi' => $harga_penawaran
-                ]);
-            }
-            Toastr::success('Berhasil', 'Anda Berhasil Melakukan Penawaran!', ['timeOut' => 5000]);
-        });
+        try {
+            $lelang = Lelang::find($id);
+            DB::transaction(function () use($id, $lelang){ 
+                if ($lelang->harga_tertinggi == 0) {
+                    $bid = Penawaran::create([
+                     'id_user' => Auth::user()->id,
+                     'id_lelang' => $id,
+                     'harga_penawaran' => $lelang->harga_awal
+                    ]);
+                    $lelang->update([
+                        'harga_tertinggi' => $bid->harga_penawaran,
+                    ]);
+                }else{
+                    $penawaran_tertinggi = $lelang->harga_tertinggi;
+                    $kelipatan_harga = $lelang->kelipatan_harga;
+                    $harga_penawaran = $penawaran_tertinggi + $kelipatan_harga;
+    
+                    $bid = Penawaran::create([
+                        'id_user' => Auth::user()->id,
+                        'id_lelang' => $id,
+                        'harga_penawaran' => $harga_penawaran
+                    ]);
+                    $lelang->update([
+                        'harga_tertinggi' => $harga_penawaran
+                    ]);
+                }
+                Toastr::success('Berhasil', 'Anda Berhasil Melakukan Penawaran!', ['timeOut' => 5000]);
+            });
+        } catch (\Throwable $th) {
+            Toastr::error('Gagal', 'Lelang Telah Berakhir/Belum Dibuka!');
+            return back();
+        }
 
         return redirect()->back();
     }

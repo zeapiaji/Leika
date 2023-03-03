@@ -1,14 +1,20 @@
 @extends('layouts.app')
 @section('content')
-<!-- start page title -->
+
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">Lelang</h4>
+            <h4 class="mb-0">Buka Lelang</h4>
+            <div class="page-title-right">
+                <div class="d-flex">
+                    <h5><a href="{{route('lelang')}}">Kelola Lelang</a></h5>
+                    <h5 class="ms-1 me-1">/</h5>
+                    <h5>Buka Lelang</h5>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<!-- end page title -->
 
 <div class="row">
     <div class="col-lg-8">
@@ -40,7 +46,7 @@
 
                                 <div class="col-9">
                                     <div class="tab-content position-relative" id="v-pills-tabContent">
-
+                                        @if (count($data->foto_barang)>0)
                                         @foreach ($data->foto_barang as $item)
                                         <div class="tab-pane fade show {{$item->id == $foto_utama->id ? 'active' : ''}}"
                                             id="product-{{$item->id}}" role="tabpanel">
@@ -51,6 +57,15 @@
                                             </div>
                                         </div>
                                         @endforeach
+                                        @else
+                                        <div class="tab-pane fade show active"
+                                            id="product" role="tabpanel">
+                                            <div class="product-img">
+                                                <img src="{{asset('images/product/img-1.png')}}" alt=""
+                                                    class="img-fluid mx-auto d-block">
+                                            </div>
+                                        </div>
+                                        @endif
                                     </div>
 
                                 </div>
@@ -124,11 +139,11 @@
                 </div>
                 <div class="card-body">
                     <label for="harga_awal">Harga Awal</label>
-                    <input type="number" name="harga_awal" class="form-control" id="harga_awal"
+                    <input type="number" name="harga_awal" class="form-control" id="harga_awal" @if(isset($data->lelang)) value="{{$data->lelang->harga_awal}}" disabled @endif
                         placeholder="Masukan Harga Awal Penawaran" required data-parsley-error-message="Masukan Harga Awal!">
                     <div class="mt-3">
                         <label for="kelipatan_harga">Kelipatan</label>
-                        <input type="number" name="kelipatan_harga" class="form-control" id="kelipatan_harga"
+                        <input type="number" name="kelipatan_harga" class="form-control" id="kelipatan_harga" @if(isset($data->lelang)) value="{{$data->lelang->kelipatan_harga}}" disabled @endif
                             placeholder="Masukan Kelipatan Harga Penawaran" required data-parsley-error-message="Masukan Kelipatan Harga!">
                     </div>
                 </div>
@@ -143,5 +158,5 @@
     </div>
 </div>
 
-@include('components.btn-back')
+@include('components.btn-back-lelang')
 @endsection

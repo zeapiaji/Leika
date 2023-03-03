@@ -16,7 +16,6 @@ class BarangSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=0; $i <= 20 ; $i++) { 
             Barang::create([
                 'nama_barang' => 'Sony A7RV',
                 'id_merek' => 1,
@@ -78,5 +77,4 @@ class BarangSeeder extends Seeder
                 'id_lensa' => 3
             ]);
         }
-    }
 }

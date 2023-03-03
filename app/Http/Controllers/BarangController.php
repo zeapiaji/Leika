@@ -6,6 +6,7 @@ use App\Models\Lensa;
 use App\Models\Merek;
 use App\Models\Barang;
 use App\Models\Kamera;
+use App\Models\Lelang;
 use App\Models\Kondisi;
 use App\Models\Kategori;
 use App\Models\Mounting;
@@ -294,19 +295,34 @@ class BarangController extends Controller
      * @param  \App\Models\Barang  $barang
      * @return \Illuminate\Http\Response
      */
-    public function hapus_kamera(Barang $barang, $id)
+    public function hapus_kamera($id)
     {
-        DB::transaction(function () use ($barang, $id){
-            Kamera::where('id', $barang->id_kamera)->delete();
-            $barang = Barang::find(120);
-            $foto_barang = FotoBarang::where('id_barang', $barang->id)->get();
-        
-            $this->hapus_gambar($foto_barang);
-            $barang->delete();
-            
-            Toastr::success('Berhasil', 'Data Berhasil Dihapus!', ['timeOut' => 5000]);
-        });
-        return redirect()->route('index');
+        try {
+            DB::transaction(function () use ($id){
+                $barang = Barang::find($id);
+                $lelang = Lelang::where('id_barang', $barang->id)->first();
+                if ($lelang) {
+                    Toastr::error('Gagal', 'Data ini sudah terhubung ke Lelang!', ['timeOut' => 5000]);
+                    return back();
+                }else{
+                    $kamera = $barang->id_kamera;
+                    $barang->update([
+                        'id_kamera' => null
+                    ]);
+                    Kamera::where('id', $kamera)->delete();
+                    $foto_barang = FotoBarang::where('id_barang', $barang->id)->get();
+                
+                    $this->hapus_gambar($foto_barang);
+                    $barang->delete();
+                    
+                    Toastr::success('Berhasil', 'Data Berhasil Dihapus!', ['timeOut' => 5000]);
+                }
+            });
+        } catch (\Throwable $th) {
+            Toastr::error('Gagal', 'Data Gagal Dihapus!', ['timeOut' => 5000]);
+            return back();
+        }
+        return redirect()->back();
     }
 
     
@@ -316,18 +332,33 @@ class BarangController extends Controller
      * @param  \App\Models\Barang  $barang
      * @return \Illuminate\Http\Response
      */
-    public function hapus_lensa(Barang $barang, $id)
+    public function hapus_lensa($id)
     {
-        DB::transaction(function () use ($barang, $id){
-            Lensa::where('id', $barang->id_lensa)->delete();
-            $barang = Barang::find($id);
-            $foto_barang = FotoBarang::where('id_barang', $barang->id)->get();
-        
-            $this->hapus_gambar($foto_barang);
-            $barang->delete();
-    
-            Toastr::success('Berhasil', 'Data Berhasil Dihapus!', ['timeOut' => 5000]);
-        });
+        try {
+            DB::transaction(function () use ($id){
+                $barang = Barang::find($id);
+                $lelang = Lelang::where('id_barang', $barang->id)->first();
+                if ($lelang) {
+                    Toastr::error('Gagal', 'Data ini sudah terhubung ke Lelang!', ['timeOut' => 5000]);
+                    return back();
+                }else {
+                    $lensa = $barang->id_lensa;
+                    $barang->update([
+                        'id_lensa' => null
+                    ]);
+                    Lensa::where('id', $lensa)->delete();
+                    $foto_barang = FotoBarang::where('id_barang', $barang->id)->get();
+                
+                    $this->hapus_gambar($foto_barang);
+                    $barang->delete();
+            
+                    Toastr::success('Berhasil', 'Data Berhasil Dihapus!', ['timeOut' => 5000]);
+                }
+            });
+        } catch (\Throwable $th) {
+            Toastr::error('Gagal', 'Data Gagal Dihapus!', ['timeOut' => 5000]);
+            return back();
+        }
         return redirect()->route('index');
     }
 

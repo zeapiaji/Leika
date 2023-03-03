@@ -28,7 +28,7 @@
             <div class="card-body">
                 <div class="d-flex align-items-start mb-4">
                     <div class="flex-shrink-0 me-3">
-                        @if(Storage::exists($data->lelang->user->foto_barang))
+                        @if(Storage::exists($data->lelang->user->foto_profil))
                         <img class="rounded-circle avatar-sm" src="{{asset('storage/'. $data->lelang->user->foto_profil)}}" alt="Generic placeholder image">
                         @else
                         <img class="rounded-circle avatar-sm" src="{{asset('images/users/default.png')}}" alt="Generic placeholder image">
@@ -49,7 +49,7 @@
                 <p>Kami ucapkan selamat, anda telah berhasil memenangkan lelang {{Auth::user()->riwayat_lelang->barang->nama_barang}} yang dibuka pada jam {{Auth::user()->riwayat_lelang->lelang->created_at->format('H:i d-m-Y')}} dengan penawaran sebesar Rp {{Auth::user()->riwayat_lelang->penawaran_harga}}.
                 </p>
                 <p>
-                    Invoice <a href="{{route('lihat_invoice', $data->id)}}">disini</a>
+                    Unduh invoice <a href="{{route('lihat_invoice', $data->id)}}">disini</a>
                 </p>
                 <p>Terimakasih,</p>
                 <hr/>

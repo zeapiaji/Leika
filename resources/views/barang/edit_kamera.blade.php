@@ -7,12 +7,6 @@
         <h4 class="mb-0">Edit Kamera</h4>
             <div class="page-title-right">
                 <div class="d-flex">
-                    <h5 class="text-dark">
-                        <a href="{{route('dasbor')}}">
-                            Dasbor
-                        </a>
-                    </h5>
-                    <h5 class="ms-1 me-1">/</h5> 
                     <h5><a href="{{route('index')}}">Kelola Barang</a></h5>
                     <h5 class="ms-1 me-1">/</h5>
                     <h5>Edit {{$data->nama_barang}}</h5>
@@ -234,10 +228,18 @@
                     </a>
 
                     <div class="p-4">
+                        <center>
+                            <div id="image_preview"></div>
+                        </center>
                         <div class="mt-3">
                             <label for="foto_barang">Tambah Gambar</label>
-                            <input type="file" class="form-control" id="foto_barang" name="foto_barang[]" multiple>
-                            <i class="text-danger fs-6 fw-light">*bila ingin mengganti gambar, centang kolom hapus dan tambah gambar.</i>
+                            <input type="file" class="form-control @error('gambar_produk')is-invalid @enderror" id="gambar_produk" name="gambar_produk[]" onchange="preview_image()" multiple>
+                            @error('gambar_produk')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror
+                            <i class="text-danger fs-6 fw-light">*bila ingin mengganti gambar, centang gambar dan tambah gambar.</i>
                         </div>
                         <div class="row mt-3">
                             @foreach ($foto_barang as $item)

@@ -11,7 +11,7 @@
 </div>
 <!-- end page title -->
 
-<form action="{{route('perbarui.merek', $data->id)}}" method="POST">
+<form action="{{route('perbarui.mounting', $data->id)}}" method="POST">
     @csrf
     @method('PUT')
 
